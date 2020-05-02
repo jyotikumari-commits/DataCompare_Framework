@@ -3,23 +3,20 @@ import pandas as pd
 import pyodbc
 
 
-conn = pyodbc.connect('Driver={SQL Server Native Client 11.0};'
+conn = pyodbc.connect('Driver={ODBC Driver 17 for SQL Server};'
                                 'Server=ITT-AKSHAY;'
                                 'Database=AdventureWorks2017;'
                                 'Trusted_Connection=yes;')
 
-SQL_Query = pd.read_sql_query(
-'''SELECT [BusinessEntityID]
-      ,[PasswordHash]
-      ,[PasswordSalt]
-      ,[rowguid]
-      ,[ModifiedDate]
-  FROM [Person].[Password]''', conn)
+query = 'SELECT [BusinessEntityID],[PasswordHash],[PasswordSalt],[rowguid],[ModifiedDate] FROM [Person].[Password]'
+path = 'C:\\Users\\akshay.telkar\\PycharmProjects\\DataComparison\\test.csv'
 
-df = pd.DataFrame(SQL_Query, columns=['BusinessEntityID','PasswordHash','PasswordSalt','rowguid','ModifiedDate'])
+SQL_Query = pd.read_sql_query(query, conn)
+
+df = pd.DataFrame(SQL_Query)
 
 
-df1 = pd.read_csv('C:\\Users\\akshay.telkar\\PycharmProjects\\DataComparison\\test.csv')
+df1 = pd.read_csv(path)
 # df2 = pd.read_csv('C:\\Users\\akshay.telkar\\PycharmProjects\\DataComparison\\test - Copy.csv')
 
 compare = datacompy.Compare(
