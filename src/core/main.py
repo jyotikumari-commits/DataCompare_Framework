@@ -1,29 +1,25 @@
 from src.core import compare
-from src.sources import sqlserver as sqlparam
+from src.core.source_mappings import *
 
 
-def function(argument1, argument2):
-    files = []
-    switcher = {
-        1: "sqlparam.sqlserver()",
-        2: "one",
-        3: "two",
-    }
+def close_connection_type(connection):
+    if source < 7:
+        return sourceMap[sources[connection]].close_connection()
+    else:
+        return connection
 
-    files.append(switcher[argument1])
-    files.append(switcher[argument2])
 
-    return files
+# Opens connection if the selected source is a database
+def open_connection_type(source_type):
+    if source_type < 7:
+        return sourceMap[sources[source_type]].open_connection()
+    else:
+        return source_type
+
 
 if __name__ == '__main__':
-    sources = {1: 'SQL Server',
-               2: 'Oracle',
-               3: 'MongoDb',
-               4: 'CSV'}
-
-
-
-    print("\nList of sources")
+    # prints list of available sources
+    print("\nList of auth")
     for source in sources:
         print(source, '->', sources[source])
 
@@ -32,21 +28,15 @@ if __name__ == '__main__':
 
     print("\nSelected source 1 is: " + sources[source1] + "\nSelected source 2 is: " + sources[source2] + "\n")
 
-    ## Sql Server
-    if sources[source1] == 'SQL Server':
-        sqlparam.sqlserver()
+    # Opens the connection if the selected source is a database else takes the path
+    connection1 = open_connection_type(source1)
+    connection2 = open_connection_type(source2)
 
-    # sqlquery = input("Enter the SQL Query: \n")
-    # uniquekey = input("Enter the unique key/business key: \n")
-    #
-    # if sources[source2] == 'CSV':
-    #     path = input("Enter the file path: \n")
-    #
-    # result = compare.data(connection, path, sqlquery, uniquekey)
-    #
-    # if result:
-    #     sqlconn.close_connection()
+    # Passing control to Compare.py
+    compare.fetch_data_type(connection1, connection2, source1, source2)
 
+    # Closing the connection if the sources are databases
+    close_connection_type(source1)
+    close_connection_type(source2)
 
-
-
+    print("Data comparison successful")
